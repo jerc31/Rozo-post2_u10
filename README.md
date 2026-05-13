@@ -1,48 +1,53 @@
-# Pipeline CI/CD Android - Post-Contenido 1
+# Pipeline CI/CD y Automatización Android
 
-Este proyecto implementa un pipeline de Integración y Despliegue Continuo (CI/CD) para una aplicación Android utilizando GitHub Actions y Firebase App Distribution.
+Este repositorio contiene los laboratorios de CI/CD (Post 1) y Automatización de Publicación (Post 2).
 
-## Flujo del Pipeline
+## Post-Contenido 1: CI/CD con GitHub Actions
 
-1.  **Lint y Pruebas Unitarias**: Se ejecuta el análisis de código (lint) y las pruebas unitarias.
-2.  **Reporte de Cobertura**: Se genera un reporte con JaCoCo.
-3.  **Quality Gate**: El pipeline falla si la cobertura de código es inferior al 60%.
-4.  **Build Firmado**: Se genera un APK de release firmado con un Keystore almacenado de forma segura.
-5.  **Distribución**: El APK se sube automáticamente a Firebase App Distribution para los testers.
+### Flujo del Pipeline
+1.  **Lint y Pruebas Unitarias**: Análisis estático y tests.
+2.  **Quality Gate**: Falla si la cobertura JaCoCo < 60%.
+3.  **Build Firmado**: APK de release generado con secretos.
+4.  **Distribución**: Subida a Firebase App Distribution.
 
-## Configuración de GitHub Secrets
+### Secrets Requeridos (Post 1)
+*   `KEYSTORE_BASE64`, `KEYSTORE_PASS`, `KEY_ALIAS`, `KEY_PASS`, `FIREBASE_APP_ID`, `FIREBASE_TOKEN`.
 
-Para que el pipeline funcione, se deben configurar los siguientes secretos en el repositorio (Settings → Secrets and variables → Actions):
+---
 
-*   `KEYSTORE_BASE64`: El contenido del archivo `.jks` codificado en Base64.
-*   `KEYSTORE_PASS`: Contraseña del Keystore.
-*   `KEY_ALIAS`: Alias de la llave.
-*   `KEY_PASS`: Contraseña del alias.
-*   `FIREBASE_APP_ID`: ID de la aplicación en Firebase.
-*   `FIREBASE_TOKEN`: Token de autenticación de Firebase (`firebase login:ci`).
+## Post-Contenido 2: Automatización con Fastlane
 
-## Badge de Estado
+### Flujo de Publicación
+1.  **Fastlane**: Automatización de subida a Google Play (`internal`, `production`).
+2.  **Feature Flag**: Implementación de Firebase Remote Config para activar/desactivar la nueva pantalla de inicio.
+3.  **Conventional Commits**: Uso de `feat:`, `fix:`, `chore:` para el historial de cambios.
 
-![Android CI/CD](https://github.com/jerc31/Rozo-post1_u10/actions/workflows/androidci.yml/badge.svg)
+### Secrets Adicionales (Post 2)
+*   `PLAY_CREDENTIALS_BASE64`: JSON de Google Play API en Base64.
+
+### Lanes de Fastlane
+*   `beta`: Compila y sube a Internal Testing.
+*   `production`: Sube a producción con rollout del 5%.
+*   `promote_to_beta`: Promueve el build de internal a beta.
 
 ---
 
 ## Checkpoints
 
-### Checkpoint 1: Pipeline Básico Funcional
-*   Workflow en `.github/workflows/androidci.yml`.
-*   Secretos configurados.
-*   Job `lint-and-test` exitoso.
+### Post 1 - Checkpoint 1: Pipeline Básico
 > **[CAPTURA_CHECKPOINT_1_AQUÍ]**
 
-### Checkpoint 2: Build Firmado y Distribuido
-*   Job `build-and-distribute` ejecutado en `main`.
-*   APK firmado correctamente.
-*   Distribución en Firebase exitosa.
+### Post 1 - Checkpoint 2: Build y Distribución
 > **[CAPTURA_CHECKPOINT_2_AQUÍ]**
 
-### Checkpoint 3: Quality Gate Configurado
-*   JaCoCo genera reportes HTML.
-*   Falla si la cobertura < 60%.
-*   Badge de estado en README.
+### Post 1 - Checkpoint 3: Quality Gate
 > **[CAPTURA_CHECKPOINT_3_AQUÍ]**
+
+### Post 2 - Checkpoint 1: Fastlane Configurado
+> **[CAPTURA_CHECKPOINT_1_FASTLANE]**
+
+### Post 2 - Checkpoint 2: Feature Flag
+> **[CAPTURA_CHECKPOINT_2_FIREBASE_CONFIG]**
+
+### Post 2 - Checkpoint 3: Versionamiento y Documentación
+> **[CAPTURA_CHECKPOINT_3_PIPELINE_FASTLANE]**

@@ -1,0 +1,65 @@
+default_platform(:android)
+
+platform :android do
+
+  before_all do
+    # Incrementar versionCode automáticamente
+    # Nota: Requiere conexión a Google Play, en CI se puede manejar con variables
+    @version_code = ENV["GITHUB_RUN_NUMBER"] || 1
+  end
+
+  desc "Distribuir build de prueba a Internal Testing"
+  lane :beta do
+    gradle(
+      task: "bundle",
+      build_type: "Release",
+      properties: {
+        "android.injected.signing.store.file" => ENV["KEYSTORE_PATH"],
+        "android.injected.signing.store.password" => ENV["KEYSTORE_PASS"],
+        "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["KEY_PASS"],
+        "versionCode" => @version_code
+      }
+    )
+    upload_to_play_store(
+      track: "internal",
+      aab: lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH],
+      release_status: "completed"
+    )
+    # Comentado porque requiere webhook de Slack
+    # slack(
+    #   message: "Build #{@version_code} distribuido a Internal Testing",
+    #   slack_url: ENV["SLACK_WEBHOOK_URL"]
+    # ) if ENV["SLACK_WEBHOOK_URL"]
+  end
+
+  desc "Publicar en producción con staged rollout al 5%"
+  lane :production do
+    gradle(
+      task: "bundle",
+      build_type: "Release",
+      properties: {
+        "android.injected.signing.store.file" => ENV["KEYSTORE_PATH"],
+        "android.injected.signing.store.password" => ENV["KEYSTORE_PASS"],
+        "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["KEY_PASS"],
+        "versionCode" => @version_code
+      }
+    )
+    upload_to_play_store(
+      track: "production",
+      rollout: "0.05",
+      aab: lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH]
+    )
+  end
+
+  desc "Promover de internal a beta"
+  lane :promote_to_beta do
+    upload_to_play_store(
+      track: "internal",
+      track_promote_to: "beta",
+      rollout: "1.0"
+    )
+  end
+
+end

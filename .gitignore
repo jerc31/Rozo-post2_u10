@@ -17,3 +17,6 @@ local.properties
 # Keystore
 *.jks
 *.keystore
+
+# Fastlane
+fastlane/google-play-credentials.json
