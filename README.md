@@ -50,4 +50,12 @@ Este repositorio contiene los laboratorios de CI/CD (Post 1) y Automatización d
 > **[CAPTURA_CHECKPOINT_2_FIREBASE_CONFIG]**
 
 ### Post 2 - Checkpoint 3: Versionamiento y Documentación
+*   Lanes: `beta`, `production`, `promote_to_beta`.
+*   Commits en formato Conventional Commits.
 > **[CAPTURA_CHECKPOINT_3_PIPELINE_FASTLANE]**
+
+## Instrucciones de Ejecución
+
+1.  **Instalar dependencias**: `bundle install`.
+2.  **Configurar Secretos**: Agregar los secrets en GitHub.
+3.  **Ejecutar localmente**: `./gradlew testDebugUnitTest` o `bundle exec fastlane beta`.
