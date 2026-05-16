@@ -77,12 +77,35 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     }
 
     val fileFilter = listOf(
+
+        // Android generado
         "**/R.class",
         "**/R$*.class",
         "**/BuildConfig.*",
         "**/Manifest*.*",
+
+        // Tests
         "**/*Test*.*",
-        "android/**/*.*"
+
+        // Android / Kotlin generado
+        "android/**/*.*",
+        "**/*\$ViewInjector*.*",
+        "**/*\$ViewBinder*.*",
+        "**/BR.*",
+        "**/databinding/*",
+        "**/BuildConfig.*",
+        "**/*MapperImpl*.*",
+
+        // Compose / UI
+        "**/*ComposableSingletons*.*",
+        "**/*Preview*.*",
+        "**/*Theme*.*",
+        "**/*Activity*.*",
+        "**/ui/theme/**",
+
+        // Firebase y config
+        "**/*Firebase*.*",
+        "**/*RemoteConfig*.*"
     )
 
     val kotlinClasses = fileTree(
