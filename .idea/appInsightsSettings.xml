@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.universidad.pipelineci_cd" />
+                  <option name="mobileSdkAppId" value="1:645364981476:android:29f45329ddf65c6f7d56f1" />
+                  <option name="projectId" value="pipelineci-cd" />
+                  <option name="projectNumber" value="645364981476" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

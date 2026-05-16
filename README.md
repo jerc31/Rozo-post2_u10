@@ -32,6 +32,26 @@ Este repositorio contiene los laboratorios de CI/CD (Post 1) y Automatización d
 
 ---
 
+## Flujo Completo de Automatización
+
+El proyecto sigue un flujo estructurado desde el desarrollo hasta la distribución:
+
+1.  **Commit**: Los cambios se registran usando **Conventional Commits** (`feat:`, `fix:`, `docs:`).
+2.  **Pipeline (CI/CD)**: GitHub Actions se activa automáticamente al hacer push a la rama `main`. Ejecuta Lint, Tests y JaCoCo.
+3.  **Fastlane**: El pipeline invoca a Fastlane para automatizar la compilación y subida de artefactos (.aab).
+4.  **Play Store**: Fastlane distribuye el build a los tracks correspondientes (`internal`, `beta` o `production`).
+5.  **Feature Flag**: Se utiliza **Firebase Remote Config** para controlar la visibilidad de la nueva interfaz de usuario sin necesidad de una nueva publicación.
+
+---
+
+## Fastlane Lanes
+
+*   `beta`: Genera el bundle y lo sube al track de **Internal Testing** en Google Play.
+*   `production`: Sube el build a **Producción** con un **rollout del 5%**.
+*   `promote_to_beta`: Promueve un build existente de **internal** a **beta**.
+
+---
+
 ## Checkpoints
 
 ### Post 1 - Checkpoint 1: Pipeline Básico
@@ -50,12 +70,4 @@ Este repositorio contiene los laboratorios de CI/CD (Post 1) y Automatización d
 > **[CAPTURA_CHECKPOINT_2_FIREBASE_CONFIG]**
 
 ### Post 2 - Checkpoint 3: Versionamiento y Documentación
-*   Lanes: `beta`, `production`, `promote_to_beta`.
-*   Commits en formato Conventional Commits.
 > **[CAPTURA_CHECKPOINT_3_PIPELINE_FASTLANE]**
-
-## Instrucciones de Ejecución
-
-1.  **Instalar dependencias**: `bundle install`.
-2.  **Configurar Secretos**: Agregar los secrets en GitHub.
-3.  **Ejecutar localmente**: `./gradlew testDebugUnitTest` o `bundle exec fastlane beta`.

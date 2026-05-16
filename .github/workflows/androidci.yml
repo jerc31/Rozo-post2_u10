@@ -40,19 +40,20 @@ jobs:
         with:
           name: jacoco-report
           path: app/build/reports/jacoco/jacocoTestReport/html/
-      - name: Check Coverage
+      - name: Quality Gate (Coverage > 60%)
         run: |
           if [ -f app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml ]; then
             COVERAGE=$(python3 -c "import xml.etree.ElementTree as ET; tree = ET.parse('app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'); root = tree.getroot(); line_counter = [c for c in root.findall('counter') if c.get('type') == 'LINE'][0]; covered = int(line_counter.get('covered')); missed = int(line_counter.get('missed')); print(covered / (covered + missed))")
             echo "Line coverage is $COVERAGE"
+          
             python3 -c "import sys; sys.exit(0 if float($COVERAGE) >= 0.60 else 1)"
           else
             echo "Jacoco report not found"
             exit 1
           fi
 
-  build-and-distribute:
-    name: Build y Distribución
+  fastlane-distribute:
+    name: Build y Fastlane (Beta)
     runs-on: ubuntu-latest
     needs: lint-and-test
     if: github.ref == 'refs/heads/main'
@@ -64,18 +65,21 @@ jobs:
           distribution: temurin
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.2"
+          ruby-version: '3.0'
           bundler-cache: true
       - name: Decode Keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release-key.jks
           echo "KEYSTORE_PATH=$(pwd)/release-key.jks" >> $GITHUB_ENV
-      - name: Decode Play Credentials
+      - name: Decode Play Store Credentials
         run: |
-          echo "${{ secrets.PLAY_CREDENTIALS_BASE64 }}" | base64 -d > fastlane/google-play-credentials.json
-      - name: Run Fastlane beta
+          echo "${{ secrets.PLAY_CREDENTIALS_BASE64 }}" | base64 -d > play-store-credentials.json
+          echo "SUPPLY_JSON_KEY=$(pwd)/play-store-credentials.json" >> $GITHUB_ENV
+      - name: Run Fastlane Beta
         env:
+          KEYSTORE_PATH: ${{ env.KEYSTORE_PATH }}
           KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASS: ${{ secrets.KEY_PASS }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
         run: bundle exec fastlane beta

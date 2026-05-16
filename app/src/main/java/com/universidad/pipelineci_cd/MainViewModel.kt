@@ -1,19 +1,37 @@
 package com.universidad.pipelineci_cd
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.remoteConfig
+import com.google.firebase.remoteconfig.remoteConfigSettings
 
 class MainViewModel : ViewModel() {
     private val remoteConfig = Firebase.remoteConfig
 
+    var isNewHomeEnabled by mutableStateOf(false)
+        private set
+
     init {
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = 3600
+        }
+        remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.setDefaultsAsync(
             mapOf("new_home_screen_enabled" to false)
         )
-        remoteConfig.fetchAndActivate()
+        
+        fetchRemoteConfig()
     }
 
-    val isNewHomeEnabled: Boolean
-        get() = remoteConfig.getBoolean("new_home_screen_enabled")
+    private fun fetchRemoteConfig() {
+        remoteConfig.fetchAndActivate()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    isNewHomeEnabled = remoteConfig.getBoolean("new_home_screen_enabled")
+                }
+            }
+    }
 }
